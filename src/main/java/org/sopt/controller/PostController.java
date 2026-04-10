@@ -4,6 +4,7 @@ package org.sopt.controller;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.PostNotFoundException;
 import org.sopt.service.PostService;
 
 
@@ -30,7 +31,7 @@ public class PostController {
     public PostResponse getPost(Long id) {
         try {
             return postService.getPost(id);
-        } catch (Exception e) {
+        } catch (PostNotFoundException e) {
             return null;
         }
     }
@@ -40,7 +41,7 @@ public class PostController {
         try {
             postService.updatePost(id, newTitle, newContent);
             System.out.println("게시글 수정 완료!");
-        } catch (IllegalArgumentException e) {
+        } catch (PostNotFoundException | IllegalArgumentException e) {
             System.out.println("🚫 " + e.getMessage());
         }
     }
@@ -50,7 +51,7 @@ public class PostController {
         try {
             postService.deletePost(id);
             System.out.println("게시글 삭제 완료!");
-        } catch (IllegalArgumentException e) {
+        } catch (PostNotFoundException e) {
             System.out.println("🚫 " + e.getMessage());
         }
     }
