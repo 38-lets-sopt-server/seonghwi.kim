@@ -51,11 +51,28 @@ public class PostService {
 
     // UPDATE 📝 과제
     public void updatePost(Long id, String newTitle, String newContent) {
-        // TODO
+        if (newTitle == null || newTitle.isBlank()) {
+            throw new IllegalArgumentException("제목은 필수입니다!");
+        }
+        if (newContent == null || newContent.isBlank()) {
+            throw new IllegalArgumentException("내용은 필수입니다!");
+        }
+
+        Post post = postRepository.findById(id);
+
+        if (post == null) {
+            throw new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.");
+        }
+
+        post.update(newTitle, newContent);
     }
 
     // DELETE 📝 과제
     public void deletePost(Long id) {
-        // TODO
+        boolean deleted = postRepository.deleteById(id);
+
+        if (!deleted) {
+            throw new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.");
+        }
     }
 }

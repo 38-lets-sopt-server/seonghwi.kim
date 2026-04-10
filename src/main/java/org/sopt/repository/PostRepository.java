@@ -26,6 +26,16 @@ public class PostRepository {
         return null;
     }
 
+    public boolean deleteById(Long id) {
+        for (Post post : postList) {
+            if (post.getId().equals(id)) {
+                postList.remove(post);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Long generateId() {
         return nextId++;
     }
