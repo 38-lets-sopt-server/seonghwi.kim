@@ -2,7 +2,6 @@ package org.sopt.service;
 
 import org.sopt.domain.Post;
 import org.sopt.dto.request.CreatePostRequest;
-import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
@@ -16,14 +15,14 @@ public class PostService {
     private final PostValidator postValidator = new PostValidator();
 
     // CREATE
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    public Long createPost(CreatePostRequest request) {
         // Service는 생성 흐름만 담당, 검사는 Validator가 담당
         postValidator.validatePost(request.title, request.content);
 
         String createdAt = java.time.LocalDateTime.now().toString();
         Post post = new Post(postRepository.generateId(), request.title, request.content, request.author, createdAt);
         postRepository.save(post);
-        return new CreatePostResponse(post.getId(), "게시글 등록 완료!");
+        return post.getId();
     }
 
     // READ - 전체 📝 과제
