@@ -56,7 +56,11 @@ public class Main {  // Main은 클라이언트라고 가정
                     System.out.print("조회할 게시글 ID: ");
                     PostResponse post = postController.getPost(scanner.nextLong());
                     scanner.nextLine();
-                    if (post != null) System.out.println(post);
+                    if (post != null) {
+                        System.out.println(post);
+                    } else {
+                        System.out.println("해당 게시글을 찾을 수 없습니다.");
+                    }
                     break;
 
                 case 4:
