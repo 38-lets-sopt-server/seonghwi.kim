@@ -39,11 +39,8 @@ public class PostService {
 
     // READ - 단건 📝 과제
     public PostResponse getPost(Long id) {
-        Post post = postRepository.findById(id);
-
-        if (post == null) {
-            throw new PostNotFoundException("해당 게시글을 찾을 수 없습니다.");
-        }
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
 
         return new PostResponse(post);
     }
@@ -52,11 +49,8 @@ public class PostService {
     public void updatePost(Long id, String newTitle, String newContent) {
        postValidator.validatePost(newTitle, newContent);
 
-        Post post = postRepository.findById(id);
-
-        if (post == null) {
-            throw new PostNotFoundException("해당 게시글을 찾을 수 없습니다.");
-        }
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
 
         post.update(newTitle, newContent);
     }
@@ -66,7 +60,7 @@ public class PostService {
         boolean deleted = postRepository.deleteById(id);
 
         if (!deleted) {
-            throw new PostNotFoundException("해당 게시글을 찾을 수 없습니다.");
+            throw new PostNotFoundException(id);
         }
     }
 }

@@ -4,6 +4,7 @@ import org.sopt.domain.Post;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class PostRepository {
     private final List<Post> postList = new ArrayList<>();
@@ -18,12 +19,12 @@ public class PostRepository {
         return postList;
     }
 
-    public Post findById(Long id) {
+    public Optional<Post> findById(Long id) {
         for (Post post : postList) {
             if (post.getId().equals(id))
-                return post;
+                return Optional.of(post);
         }
-        return null;
+        return Optional.empty();
     }
 
     public boolean deleteById(Long id) {
