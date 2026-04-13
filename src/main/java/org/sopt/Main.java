@@ -3,6 +3,7 @@ package org.sopt;
 import org.sopt.controller.PostController;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.ApiResponse;
+import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
 
 import java.util.List;
@@ -37,12 +38,12 @@ public class Main {  // Main은 클라이언트라고 가정
                     System.out.print("작성자: ");
                     String author = scanner.nextLine();
 
-                    ApiResponse<Long> createResponse = postController.createPost(
+                    ApiResponse<CreatePostResponse> createResponse = postController.createPost(
                             new CreatePostRequest(title, content, author)
                     );
                     System.out.println(createResponse.message);
                     if (createResponse.success) {
-                        System.out.println("생성된 게시글 ID: " + createResponse.data);
+                        System.out.println("생성된 게시글 ID: " + createResponse.data.postId);
                     }
                     break;
 

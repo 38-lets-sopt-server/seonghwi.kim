@@ -2,6 +2,7 @@ package org.sopt.controller;
 
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.ApiResponse;
+import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.service.PostService;
@@ -12,10 +13,10 @@ public class PostController {
     private final PostService postService = new PostService();
 
     // POST /posts
-    public ApiResponse<Long> createPost(CreatePostRequest request) {
+    public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
         try {
             Long postId = postService.createPost(request);
-            return ApiResponse.success("게시글 등록 완료!", postId);
+            return ApiResponse.success("게시글 등록 완료!", new CreatePostResponse(postId));
         } catch (IllegalArgumentException e) {
             return ApiResponse.fail("🚫 " + e.getMessage());
         }
