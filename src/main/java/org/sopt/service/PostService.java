@@ -5,6 +5,8 @@ import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.request.UpdatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.BusinessException;
+import org.sopt.exception.ErrorCode;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 import org.sopt.validator.PostValidator;
@@ -97,11 +99,11 @@ public class PostService {
 
     private void validatePageRequest(int page, int size) {
         if (page < 0) {
-            throw new IllegalArgumentException("page는 0 이상이어야 합니다.");
+            throw new BusinessException(ErrorCode.INVALID_PAGE_REQUEST);
         }
 
         if (size <= 0) {
-            throw new IllegalArgumentException("size는 1 이상이어야 합니다.");
+            throw new BusinessException(ErrorCode.INVALID_SIZE_REQUEST);
         }
     }
 }

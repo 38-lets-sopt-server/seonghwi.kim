@@ -1,7 +1,6 @@
 package org.sopt.exception;
 
 import org.sopt.dto.response.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,23 +8,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(PostNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handlePostNotFoundException(PostNotFoundException exception) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(errorCode.getStatus())
                 .body(ApiResponse.fail(
-                        "POST_NOT_FOUND",
+                        errorCode.getCode(),
                         exception.getMessage()
                 ));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException exception) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception exception) {
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(errorCode.getStatus())
                 .body(ApiResponse.fail(
-                        "INVALID_POST_REQUEST",
-                        exception.getMessage()
+                        errorCode.getCode(),
+                        errorCode.getMessage()
                 ));
     }
 }
