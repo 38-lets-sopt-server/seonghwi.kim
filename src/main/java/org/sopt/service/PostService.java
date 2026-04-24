@@ -1,5 +1,6 @@
 package org.sopt.service;
 
+import org.sopt.domain.BoardType;
 import org.sopt.domain.Post;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.request.UpdatePostRequest;
@@ -30,9 +31,14 @@ public class PostService {
     // CREATE
     public CreatePostResponse createPost(CreatePostRequest request) {
         // Service는 생성 흐름만 담당, 검사는 Validator가 담당
-        postValidator.validatePost(request.title(), request.content(), request.isAnonymous());
+        postValidator.validateCreatePost(
+                request.title(),
+                request.content(),
+                request.isAnonymous(),
+                request.boardType()
+        );
 
-        String createdAt = LocalDateTime.now().toString();
+        String now = LocalDateTime.now().toString();
 
         Post post = new Post(
                 postRepository.generateId(),
@@ -40,7 +46,9 @@ public class PostService {
                 request.content(),
                 request.author(),
                 request.isAnonymous(),
-                createdAt
+                request.boardType(),
+                now,
+                now
         );
 
         postRepository.save(post);
@@ -48,12 +56,14 @@ public class PostService {
         return new CreatePostResponse(post.getId());
     }
 
-    // READ - 전체 조회, page/size 적용
-    public List<PostResponse> getAllPosts(int page, int size) {
+    // READ - 게시판 종류별 전체 조회, page/size 적용
+    public List<PostResponse> getAllPosts(int page, int size, BoardType boardType) {
         validatePageRequest(page, size);
+        validateBoardTypeRequest(boardType);
 
         List<Post> posts = postRepository.findAll().stream()
-                .sorted(Comparator.comparing(Post::getId).reversed())  // 최신순 정렬 (id가 큰 게시글 순)
+                .filter(post -> post.getBoardType() == boardType)
+                .sorted(Comparator.comparing(Post::getId).reversed())
                 .toList();
 
         int startIndex = page * size;
@@ -78,10 +88,21 @@ public class PostService {
 
     // UPDATE
     public void updatePost(Long id, UpdatePostRequest request) {
-        postValidator.validatePost(request.title(), request.content(), request.isAnonymous());
+        postValidator.validateUpdatePost(
+                request.title(),
+                request.content(),
+                request.isAnonymous()
+        );
 
         Post post = findPostById(id);
-        post.update(request.title(), request.content(), request.isAnonymous());
+        String updatedAt = LocalDateTime.now().toString();
+
+        post.update(
+                request.title(),
+                request.content(),
+                request.isAnonymous(),
+                updatedAt
+        );
     }
 
     // DELETE
@@ -105,6 +126,12 @@ public class PostService {
 
         if (size <= 0) {
             throw new BusinessException(ErrorCode.INVALID_SIZE_REQUEST);
+        }
+    }
+
+    private void validateBoardTypeRequest(BoardType boardType) {
+        if (boardType == null) {
+            throw new BusinessException(ErrorCode.INVALID_POST_BOARD_TYPE);
         }
     }
 }

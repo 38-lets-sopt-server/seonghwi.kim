@@ -1,5 +1,6 @@
 package org.sopt.controller;
 
+import org.sopt.domain.BoardType;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.request.UpdatePostRequest;
 import org.sopt.dto.response.ApiResponse;
@@ -46,13 +47,14 @@ public class PostController {
                 ));
     }
 
-    // GET /posts?page=0&size=10  전체 목록 조회
+    // GET /posts?page=0&size=10  게시판 종류별 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) BoardType boardType
     ) {
-        List<PostResponse> response = postService.getAllPosts(page, size);
+        List<PostResponse> response = postService.getAllPosts(page, size, boardType);
 
         return ResponseEntity
                 .ok(ApiResponse.success(

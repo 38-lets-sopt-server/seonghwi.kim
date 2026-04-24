@@ -34,6 +34,12 @@ public enum ErrorCode {
             "익명 여부는 필수입니다."
     ),
 
+    INVALID_POST_BOARD_TYPE(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_POST_BOARD_TYPE",
+            "게시판 종류는 필수입니다."
+    ),
+
     INVALID_PAGE_REQUEST(
             HttpStatus.BAD_REQUEST,
             "INVALID_PAGE_REQUEST",
@@ -44,6 +50,18 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST,
             "INVALID_SIZE_REQUEST",
             "size는 1 이상이어야 합니다."
+    ),
+
+    INVALID_REQUEST_PARAMETER(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_REQUEST_PARAMETER",
+            "요청 파라미터 형식이 올바르지 않습니다."
+    ),
+
+    INVALID_REQUEST_BODY(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_REQUEST_BODY",
+            "요청 본문 형식이 올바르지 않습니다."
     ),
 
     POST_FORBIDDEN(

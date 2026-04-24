@@ -1,5 +1,6 @@
 package org.sopt.validator;
 
+import org.sopt.domain.BoardType;
 import org.sopt.exception.BusinessException;
 import org.sopt.exception.ErrorCode;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,14 @@ public class PostValidator {
 
     private static final int MAX_TITLE_LENGTH = 50;
 
-    public void validatePost(String title, String content, Boolean isAnonymous) {
+    public void validateCreatePost(String title, String content, Boolean isAnonymous, BoardType boardType) {
+        validateTitle(title);
+        validateContent(content);
+        validateAnonymous(isAnonymous);
+        validateBoardType(boardType);
+    }
+
+    public void validateUpdatePost(String title, String content, Boolean isAnonymous) {
         validateTitle(title);
         validateContent(content);
         validateAnonymous(isAnonymous);
@@ -34,6 +42,12 @@ public class PostValidator {
     private void validateAnonymous(Boolean isAnonymous) {
         if (isAnonymous == null) {
             throw new BusinessException(ErrorCode.INVALID_POST_ANONYMOUS);
+        }
+    }
+
+    private void validateBoardType(BoardType boardType) {
+        if (boardType == null) {
+            throw new BusinessException(ErrorCode.INVALID_POST_BOARD_TYPE);
         }
     }
 }
