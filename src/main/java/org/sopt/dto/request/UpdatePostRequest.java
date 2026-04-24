@@ -1,0 +1,7 @@
+package org.sopt.dto.request;
+
+public record UpdatePostRequest(  // 게시글 수정 요청 DTO
+        String title,
+        String content
+) {
+}

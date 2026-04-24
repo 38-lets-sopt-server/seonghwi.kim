@@ -1,9 +1,6 @@
 package org.sopt.dto.response;
 
-public class CreatePostResponse {
-    public Long postId;
-
-    public CreatePostResponse(Long postId) {
-        this.postId = postId;
-    }
+public record CreatePostResponse(  // 게시글 작성 응답 DTO
+        Long postId
+) {
 }

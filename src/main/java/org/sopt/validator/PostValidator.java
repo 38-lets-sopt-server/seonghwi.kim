@@ -1,6 +1,10 @@
 package org.sopt.validator;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PostValidator {
+
     private static final int MAX_TITLE_LENGTH = 50;
 
     public void validatePost(String title, String content) {
