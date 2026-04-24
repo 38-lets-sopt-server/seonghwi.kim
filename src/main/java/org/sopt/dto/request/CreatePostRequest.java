@@ -1,8 +1,9 @@
 package org.sopt.dto.request;
 
-public record CreatePostRequest(  // 게시글 작성 요청 DTO
+public record CreatePostRequest(
         String title,
         String content,
-        String author
+        String author,
+        Boolean isAnonymous
 ) {
 }

@@ -9,9 +9,10 @@ public class PostValidator {
 
     private static final int MAX_TITLE_LENGTH = 50;
 
-    public void validatePost(String title, String content) {
+    public void validatePost(String title, String content, Boolean isAnonymous) {
         validateTitle(title);
         validateContent(content);
+        validateAnonymous(isAnonymous);
     }
 
     private void validateTitle(String title) {
@@ -27,6 +28,12 @@ public class PostValidator {
     private void validateContent(String content) {
         if (content == null || content.isBlank()) {
             throw new BusinessException(ErrorCode.INVALID_POST_CONTENT);
+        }
+    }
+
+    private void validateAnonymous(Boolean isAnonymous) {
+        if (isAnonymous == null) {
+            throw new BusinessException(ErrorCode.INVALID_POST_ANONYMOUS);
         }
     }
 }

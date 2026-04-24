@@ -2,11 +2,12 @@ package org.sopt.dto.response;
 
 import org.sopt.domain.Post;
 
-public record PostResponse(  // 게시글 조회 응답 DTO
+public record PostResponse(
         Long postId,
         String title,
         String content,
-        String author,
+        String authorName,
+        boolean isAnonymous,
         String createdAt
 ) {
 
@@ -15,7 +16,8 @@ public record PostResponse(  // 게시글 조회 응답 DTO
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getAuthor(),
+                post.getDisplayAuthorName(),
+                post.isAnonymous(),
                 post.getCreatedAt()
         );
     }

@@ -1,7 +1,8 @@
 package org.sopt.dto.request;
 
-public record UpdatePostRequest(  // 게시글 수정 요청 DTO
+public record UpdatePostRequest(
         String title,
-        String content
+        String content,
+        Boolean isAnonymous
 ) {
 }

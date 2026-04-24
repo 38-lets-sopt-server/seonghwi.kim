@@ -30,7 +30,7 @@ public class PostService {
     // CREATE
     public CreatePostResponse createPost(CreatePostRequest request) {
         // Service는 생성 흐름만 담당, 검사는 Validator가 담당
-        postValidator.validatePost(request.title(), request.content());
+        postValidator.validatePost(request.title(), request.content(), request.isAnonymous());
 
         String createdAt = LocalDateTime.now().toString();
 
@@ -39,6 +39,7 @@ public class PostService {
                 request.title(),
                 request.content(),
                 request.author(),
+                request.isAnonymous(),
                 createdAt
         );
 
@@ -77,10 +78,10 @@ public class PostService {
 
     // UPDATE
     public void updatePost(Long id, UpdatePostRequest request) {
-        postValidator.validatePost(request.title(), request.content());
+        postValidator.validatePost(request.title(), request.content(), request.isAnonymous());
 
         Post post = findPostById(id);
-        post.update(request.title(), request.content());
+        post.update(request.title(), request.content(), request.isAnonymous());
     }
 
     // DELETE
