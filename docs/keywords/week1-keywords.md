@@ -1,4 +1,4 @@
-# 1주차 키워드 과제
+# 1 주차 키워드 과제
 
 ## 1. `final` / `static` / `static final` 의 차이?
 
