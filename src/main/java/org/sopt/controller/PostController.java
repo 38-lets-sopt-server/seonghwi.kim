@@ -47,7 +47,7 @@ public class PostController {
                 ));
     }
 
-    // GET /posts?page=0&size=10  게시판 종류별 목록 조회
+    // GET /posts?boardType=FREE&page=0&size=10  게시판 종류별 목록 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
