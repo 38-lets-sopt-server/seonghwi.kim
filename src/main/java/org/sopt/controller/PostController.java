@@ -9,7 +9,6 @@ import org.sopt.dto.response.PostResponse;
 import org.sopt.dto.response.SuccessCode;
 import org.sopt.service.PostService;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
