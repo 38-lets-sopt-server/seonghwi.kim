@@ -6,7 +6,9 @@ import org.sopt.dto.request.UpdatePostRequest;
 import org.sopt.dto.response.ApiResponse;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.dto.response.SuccessCode;
 import org.sopt.service.PostService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,10 +41,9 @@ public class PostController {
         CreatePostResponse response = postService.createPost(request);
 
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(SuccessCode.POST_CREATE_SUCCESS.getStatus())
                 .body(ApiResponse.success(
-                        "POST_CREATE_SUCCESS",
-                        "게시글 작성에 성공했습니다.",
+                        SuccessCode.POST_CREATE_SUCCESS,
                         response
                 ));
     }
@@ -57,9 +58,9 @@ public class PostController {
         List<PostResponse> response = postService.getAllPosts(page, size, boardType);
 
         return ResponseEntity
-                .ok(ApiResponse.success(
-                        "POST_LIST_SUCCESS",
-                        "게시글 목록 조회에 성공했습니다.",
+                .status(SuccessCode.POST_LIST_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_LIST_SUCCESS,
                         response
                 ));
     }
@@ -72,9 +73,9 @@ public class PostController {
         PostResponse response = postService.getPost(id);
 
         return ResponseEntity
-                .ok(ApiResponse.success(
-                        "POST_DETAIL_SUCCESS",
-                        "게시글 상세 조회에 성공했습니다.",
+                .status(SuccessCode.POST_DETAIL_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_DETAIL_SUCCESS,
                         response
                 ));
     }
@@ -88,9 +89,9 @@ public class PostController {
         postService.updatePost(id, request);
 
         return ResponseEntity
-                .ok(ApiResponse.success(
-                        "POST_UPDATE_SUCCESS",
-                        "게시글 수정에 성공했습니다.",
+                .status(SuccessCode.POST_UPDATE_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_UPDATE_SUCCESS,
                         null
                 ));
     }

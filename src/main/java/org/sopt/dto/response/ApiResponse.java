@@ -7,8 +7,13 @@ public record ApiResponse<T>(
         T data
 ) {
 
-    public static <T> ApiResponse<T> success(String code, String message, T data) {
-        return new ApiResponse<>(true, code, message, data);
+    public static <T> ApiResponse<T> success(SuccessCode successCode, T data) {
+        return new ApiResponse<>(
+                true,
+                successCode.getCode(),
+                successCode.getMessage(),
+                data
+        );
     }
 
     public static <T> ApiResponse<T> fail(String code, String message) {
