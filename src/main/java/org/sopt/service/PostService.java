@@ -38,7 +38,7 @@ public class PostService {
                 request.boardType()
         );
 
-        String now = LocalDateTime.now().toString();
+        LocalDateTime now = LocalDateTime.now();
 
         Post post = new Post(
                 postRepository.generateId(),
@@ -95,7 +95,7 @@ public class PostService {
         );
 
         Post post = findPostById(id);
-        String updatedAt = LocalDateTime.now().toString();
+        LocalDateTime updatedAt = LocalDateTime.now();
 
         post.update(
                 request.title(),

@@ -3,6 +3,8 @@ package org.sopt.dto.response;
 import org.sopt.domain.BoardType;
 import org.sopt.domain.Post;
 
+import java.time.LocalDateTime;
+
 public record PostResponse(
         Long postId,
         String title,
@@ -10,8 +12,8 @@ public record PostResponse(
         String authorName,
         boolean isAnonymous,
         BoardType boardType,
-        String createdAt,
-        String updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 
     public static PostResponse from(Post post) {
