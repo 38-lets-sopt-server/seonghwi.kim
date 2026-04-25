@@ -56,8 +56,4 @@ public class Post {
 
         return author;
     }
-
-    public String getInfo() {
-        return "[" + id + "] " + title + " - " + getDisplayAuthorName() + " (" + createdAt + ")\n" + content;
-    }
 }
