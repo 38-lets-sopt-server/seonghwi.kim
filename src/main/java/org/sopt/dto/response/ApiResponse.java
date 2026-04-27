@@ -1,21 +1,22 @@
 package org.sopt.dto.response;
 
-public class ApiResponse<T> {
-    public boolean success;
-    public String message;
-    public T data;
+public record ApiResponse<T>(
+        boolean success,
+        String code,
+        String message,
+        T data
+) {
 
-    public ApiResponse(boolean success, String message, T data) {
-        this.success = success;
-        this.message = message;
-        this.data = data;
+    public static <T> ApiResponse<T> success(SuccessCode successCode, T data) {
+        return new ApiResponse<>(
+                true,
+                successCode.getCode(),
+                successCode.getMessage(),
+                data
+        );
     }
 
-    public static <T> ApiResponse<T> success(String message, T data) {
-        return new ApiResponse<>(true, message, data);
-    }
-
-    public static <T> ApiResponse<T> fail(String message) {
-        return new ApiResponse<>(false, message, null);
+    public static <T> ApiResponse<T> fail(String code, String message) {
+        return new ApiResponse<>(false, code, message, null);
     }
 }

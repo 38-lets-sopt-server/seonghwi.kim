@@ -1,60 +1,109 @@
 package org.sopt.controller;
 
+import org.sopt.domain.BoardType;
 import org.sopt.dto.request.CreatePostRequest;
+import org.sopt.dto.request.UpdatePostRequest;
 import org.sopt.dto.response.ApiResponse;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
-import org.sopt.exception.PostNotFoundException;
+import org.sopt.dto.response.SuccessCode;
 import org.sopt.service.PostService;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/posts")
 public class PostController {
-    private final PostService postService = new PostService();
+
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     // POST /posts
-    public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
-        try {
-            Long postId = postService.createPost(request);
-            return ApiResponse.success("게시글 등록 완료!", new CreatePostResponse(postId));
-        } catch (IllegalArgumentException e) {
-            return ApiResponse.fail("🚫 " + e.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<ApiResponse<CreatePostResponse>> createPost(
+            @RequestBody CreatePostRequest request
+    ) {
+        CreatePostResponse response = postService.createPost(request);
+
+        return ResponseEntity
+                .status(SuccessCode.POST_CREATE_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_CREATE_SUCCESS,
+                        response
+                ));
     }
 
-    // GET /posts
-    public ApiResponse<List<PostResponse>> getAllPosts() {
-        List<PostResponse> posts = postService.getAllPosts();
-        return ApiResponse.success("게시글 전체 조회 완료!", posts);
+    // GET /posts?boardType=FREE&page=0&size=10  게시판 종류별 목록 조회
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) BoardType boardType
+    ) {
+        List<PostResponse> response = postService.getAllPosts(page, size, boardType);
+
+        return ResponseEntity
+                .status(SuccessCode.POST_LIST_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_LIST_SUCCESS,
+                        response
+                ));
     }
 
-    // GET /posts/{id}
-    public ApiResponse<PostResponse> getPost(Long id) {
-        try {
-            PostResponse post = postService.getPost(id);
-            return ApiResponse.success("게시글 단건 조회 완료!", post);
-        } catch (PostNotFoundException e) {
-            return ApiResponse.fail("🚫 " + e.getMessage());
-        }
+    // GET /posts/{id} 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PostResponse>> getPost(
+            @PathVariable Long id
+    ) {
+        PostResponse response = postService.getPost(id);
+
+        return ResponseEntity
+                .status(SuccessCode.POST_DETAIL_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_DETAIL_SUCCESS,
+                        response
+                ));
     }
 
-    // PUT /posts/{id}
-    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
-        try {
-            postService.updatePost(id, newTitle, newContent);
-            return ApiResponse.success("게시글 수정 완료!", null);
-        } catch (PostNotFoundException | IllegalArgumentException e) {
-            return ApiResponse.fail("🚫 " + e.getMessage());
-        }
+    // PATCH /posts/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> updatePost(
+            @PathVariable Long id,
+            @RequestBody UpdatePostRequest request
+    ) {
+        postService.updatePost(id, request);
+
+        return ResponseEntity
+                .status(SuccessCode.POST_UPDATE_SUCCESS.getStatus())
+                .body(ApiResponse.success(
+                        SuccessCode.POST_UPDATE_SUCCESS,
+                        null
+                ));
     }
 
     // DELETE /posts/{id}
-    public ApiResponse<Void> deletePost(Long id) {
-        try {
-            postService.deletePost(id);
-            return ApiResponse.success("게시글 삭제 완료!", null);
-        } catch (PostNotFoundException e) {
-            return ApiResponse.fail("🚫 " + e.getMessage());
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable Long id
+    ) {
+        postService.deletePost(id);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
