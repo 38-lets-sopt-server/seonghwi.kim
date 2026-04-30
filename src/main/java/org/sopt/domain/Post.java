@@ -48,12 +48,4 @@ public class Post {
         this.isAnonymous = isAnonymous;
         this.updatedAt = updatedAt;
     }
-
-    public String getDisplayAuthorName() {
-        if (isAnonymous) {
-            return "익명";
-        }
-
-        return author;
-    }
 }

@@ -21,7 +21,7 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public List<Post> findAll() {
-        return new ArrayList<>(postList);
+        return List.copyOf(postList);
     }
 
     @Override

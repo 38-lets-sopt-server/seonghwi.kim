@@ -63,7 +63,10 @@ public class PostService {
 
         List<Post> posts = postRepository.findAll().stream()
                 .filter(post -> post.getBoardType() == boardType)
-                .sorted(Comparator.comparing(Post::getId).reversed())
+                .sorted(
+                        Comparator.comparing(Post::getCreatedAt).reversed()
+                                .thenComparing(Comparator.comparing(Post::getId).reversed())
+                )
                 .toList();
 
         int startIndex = page * size;
