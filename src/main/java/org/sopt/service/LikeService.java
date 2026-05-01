@@ -3,14 +3,16 @@ package org.sopt.service;
 import org.sopt.domain.Like;
 import org.sopt.domain.Post;
 import org.sopt.domain.User;
-import org.sopt.dto.request.LikeRequest;
 import org.sopt.exception.BusinessException;
 import org.sopt.exception.ErrorCode;
+import org.sopt.exception.LikeAlreadyExistsException;
+import org.sopt.exception.LikeNotFoundException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.exception.UserNotFoundException;
 import org.sopt.repository.LikeRepository;
 import org.sopt.repository.PostRepository;
 import org.sopt.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,21 +34,36 @@ public class LikeService {
     }
 
     @Transactional
-    public void addLike(Long postId, LikeRequest request) {
-        User user = findUserById(request.userId());
+    public void addLike(Long postId, Long userId) {
+        validateUserId(userId);
+
+        User user = findUserById(userId);
         Post post = findPostById(postId);
 
         validateLikeNotExists(user.getId(), post.getId());
 
         Like like = new Like(user, post);
-        likeRepository.save(like);
+
+        try {
+            // DB insert를 트랜잭션 끝까지 미루지 않고 이 시점에 반영
+            likeRepository.saveAndFlush(like);
+        } catch (DataIntegrityViolationException exception) {
+            throw new LikeAlreadyExistsException(user.getId(), post.getId());
+        }
     }
 
     @Transactional
-    public void removeLike(Long postId, LikeRequest request) {
-        Like like = likeRepository.findByUserIdAndPostId(request.userId(), postId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.LIKE_NOT_FOUND));
+    public void removeLike(Long postId, Long userId) {
+        validateUserId(userId);
 
+        // 1. 사용자가 존재하는지 확인
+        User user = findUserById(userId);
+        // 2. 게시글이 존재하는지 확인
+        Post post = findPostById(postId);
+        // 3. 해당 사용자가 해당 게시글에 좋아요를 눌렀는지 확인
+        Like like = likeRepository.findByUserIdAndPostId(user.getId(), post.getId())
+                .orElseThrow(() -> new LikeNotFoundException(user.getId(), post.getId()));
+        // 4. 좋아요가 있으면 삭제
         likeRepository.delete(like);
     }
 
@@ -62,7 +79,13 @@ public class LikeService {
 
     private void validateLikeNotExists(Long userId, Long postId) {
         if (likeRepository.existsByUserIdAndPostId(userId, postId)) {
-            throw new BusinessException(ErrorCode.LIKE_ALREADY_EXISTS);
+            throw new LikeAlreadyExistsException(userId, postId);
+        }
+    }
+
+    private void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.INVALID_USER_ID);
         }
     }
 }

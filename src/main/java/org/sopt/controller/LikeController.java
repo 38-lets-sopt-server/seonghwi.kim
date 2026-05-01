@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Like", description = "좋아요 관련 API")
@@ -46,7 +47,7 @@ public class LikeController {
 
             @Valid @RequestBody LikeRequest request
     ) {
-        likeService.addLike(postId, request);
+        likeService.addLike(postId, request.userId());
 
         return ResponseEntity
                 .status(SuccessCode.LIKE_CREATE_SUCCESS.getStatus())
@@ -61,24 +62,22 @@ public class LikeController {
             description = "특정 게시글에 사용자가 누른 좋아요를 취소합니다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "좋아요 취소 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 - userId가 없거나 요청 본문 형식이 올바르지 않은 경우"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 좋아요인 경우")
+            @ApiResponse(responseCode = "204", description = "좋아요 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 - userId가 없거나 요청 파라미터 형식이 올바르지 않은 경우"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글, 사용자 또는 좋아요인 경우")
     })
     @DeleteMapping
-    public ResponseEntity<BaseResponse<Void>> removeLike(
+    public ResponseEntity<Void> removeLike(
             @Parameter(description = "좋아요를 취소할 게시글 ID", example = "1")
             @PathVariable Long postId,
 
-            @Valid @RequestBody LikeRequest request
+            @Parameter(description = "좋아요를 취소할 사용자 ID", example = "1", required = true)
+            @RequestParam(required = false) Long userId
     ) {
-        likeService.removeLike(postId, request);
+        likeService.removeLike(postId, userId);
 
         return ResponseEntity
-                .status(SuccessCode.LIKE_DELETE_SUCCESS.getStatus())
-                .body(BaseResponse.success(
-                        SuccessCode.LIKE_DELETE_SUCCESS,
-                        null
-                ));
+                .noContent()
+                .build();
     }
 }

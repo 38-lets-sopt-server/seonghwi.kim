@@ -32,12 +32,6 @@ public enum SuccessCode {
             HttpStatus.CREATED,
             "LIKE_CREATE_SUCCESS",
             "좋아요 추가에 성공했습니다."
-    ),
-
-    LIKE_DELETE_SUCCESS(
-            HttpStatus.OK,
-            "LIKE_DELETE_SUCCESS",
-            "좋아요 취소에 성공했습니다."
     );
 
     private final HttpStatus status;
