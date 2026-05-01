@@ -79,7 +79,7 @@ public class PostController {
             @Parameter(description = "한 페이지에 조회할 게시글 수입니다.", example = "10")
             @RequestParam(defaultValue = "10") int size,
 
-            @Parameter(description = "게시판 종류입니다.", example = "FREE")
+            @Parameter(description = "게시판 종류입니다.", example = "FREE", required = true)
             @RequestParam(required = false) BoardType boardType
     ) {
         List<PostResponse> response = postService.getAllPosts(page, size, boardType);

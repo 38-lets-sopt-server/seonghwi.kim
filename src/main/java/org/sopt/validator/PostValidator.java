@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class PostValidator {
 
     private static final int MAX_TITLE_LENGTH = 50;
+    private static final int MAX_CONTENT_LENGTH = 500;
 
     public void validateCreatePost(
             String title,
@@ -47,6 +48,10 @@ public class PostValidator {
     private void validateContent(String content) {
         if (content == null || content.isBlank()) {
             throw new BusinessException(ErrorCode.INVALID_POST_CONTENT);
+        }
+
+        if (content.length() > MAX_CONTENT_LENGTH) {
+            throw new BusinessException(ErrorCode.INVALID_POST_CONTENT_LENGTH);
         }
     }
 
