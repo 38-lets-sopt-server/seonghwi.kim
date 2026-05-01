@@ -21,11 +21,19 @@ public record PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getDisplayAuthorName(),
+                getAuthorName(post),
                 post.isAnonymous(),
                 post.getBoardType(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );
+    }
+
+    private static String getAuthorName(Post post) {
+        if (post.isAnonymous()) {
+            return "익명";
+        }
+
+        return post.getUser().getNickname();
     }
 }
