@@ -10,17 +10,28 @@ public class PostValidator {
 
     private static final int MAX_TITLE_LENGTH = 50;
 
-    public void validateCreatePost(String title, String content, Boolean isAnonymous, BoardType boardType) {
+    public void validateCreatePost(
+            String title,
+            String content,
+            Long userId,
+            Boolean isAnonymous,
+            BoardType boardType
+    ) {
         validateTitle(title);
         validateContent(content);
-        validateAnonymous(isAnonymous);
+        validateUserId(userId);
+        validateIsAnonymous(isAnonymous);
         validateBoardType(boardType);
     }
 
-    public void validateUpdatePost(String title, String content, Boolean isAnonymous) {
+    public void validateUpdatePost(
+            String title,
+            String content,
+            Boolean isAnonymous
+    ) {
         validateTitle(title);
         validateContent(content);
-        validateAnonymous(isAnonymous);
+        validateIsAnonymous(isAnonymous);
     }
 
     private void validateTitle(String title) {
@@ -39,7 +50,13 @@ public class PostValidator {
         }
     }
 
-    private void validateAnonymous(Boolean isAnonymous) {
+    private void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.INVALID_USER_ID);
+        }
+    }
+
+    private void validateIsAnonymous(Boolean isAnonymous) {
         if (isAnonymous == null) {
             throw new BusinessException(ErrorCode.INVALID_POST_ANONYMOUS);
         }

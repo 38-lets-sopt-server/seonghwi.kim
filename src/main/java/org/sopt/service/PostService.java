@@ -2,6 +2,7 @@ package org.sopt.service;
 
 import org.sopt.domain.BoardType;
 import org.sopt.domain.Post;
+import org.sopt.domain.User;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.request.UpdatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
@@ -9,80 +10,81 @@ import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.BusinessException;
 import org.sopt.exception.ErrorCode;
 import org.sopt.exception.PostNotFoundException;
+import org.sopt.exception.UserNotFoundException;
 import org.sopt.repository.PostRepository;
+import org.sopt.repository.UserRepository;
 import org.sopt.validator.PostValidator;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final PostValidator postValidator;
 
-    public PostService(PostRepository postRepository, PostValidator postValidator) {  // 생성자 주입
+    public PostService(
+            PostRepository postRepository,
+            UserRepository userRepository,
+            PostValidator postValidator
+    ) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
         this.postValidator = postValidator;
     }
 
     // CREATE
+    @Transactional
     public CreatePostResponse createPost(CreatePostRequest request) {
-        // Service는 생성 흐름만 담당, 검사는 Validator가 담당
         postValidator.validateCreatePost(
                 request.title(),
                 request.content(),
+                request.userId(),
                 request.isAnonymous(),
                 request.boardType()
         );
 
-        LocalDateTime now = LocalDateTime.now();
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new UserNotFoundException(request.userId()));
 
         Post post = new Post(
-                postRepository.generateId(),
                 request.title(),
                 request.content(),
-                request.author(),
                 request.isAnonymous(),
                 request.boardType(),
-                now,
-                now
+                user
         );
 
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
 
-        return new CreatePostResponse(post.getId());
+        return new CreatePostResponse(savedPost.getId());
     }
 
     // READ - 게시판 종류별 전체 조회, page/size 적용
+    @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts(int page, int size, BoardType boardType) {
         validatePageRequest(page, size);
         validateBoardTypeRequest(boardType);
 
-        List<Post> posts = postRepository.findAll().stream()
-                .filter(post -> post.getBoardType() == boardType)
-                .sorted(
-                        Comparator.comparing(Post::getCreatedAt).reversed()
-                                .thenComparing(Comparator.comparing(Post::getId).reversed())
-                )
-                .toList();
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+                        .and(Sort.by(Sort.Direction.DESC, "id"))
+        );
 
-        int startIndex = page * size;
-
-        if (startIndex >= posts.size()) {
-            return List.of();
-        }
-
-        int endIndex = Math.min(startIndex + size, posts.size());
-
-        return posts.subList(startIndex, endIndex).stream()
+        return postRepository.findByBoardType(boardType, pageRequest).stream()
                 .map(PostResponse::from)
                 .toList();
     }
 
     // READ - 단건 조회
+    @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = findPostById(id);
 
@@ -90,6 +92,7 @@ public class PostService {
     }
 
     // UPDATE
+    @Transactional
     public void updatePost(Long id, UpdatePostRequest request) {
         postValidator.validateUpdatePost(
                 request.title(),
@@ -98,27 +101,24 @@ public class PostService {
         );
 
         Post post = findPostById(id);
-        LocalDateTime updatedAt = LocalDateTime.now();
 
         post.update(
                 request.title(),
                 request.content(),
-                request.isAnonymous(),
-                updatedAt
+                request.isAnonymous()
         );
     }
 
     // DELETE
+    @Transactional
     public void deletePost(Long id) {
-        boolean deleted = postRepository.deleteById(id);
+        Post post = findPostById(id);
 
-        if (!deleted) {
-            throw new PostNotFoundException(id);
-        }
+        postRepository.delete(post);
     }
 
     private Post findPostById(Long id) {
-        return postRepository.findById(id)
+        return postRepository.findWithUserById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
 

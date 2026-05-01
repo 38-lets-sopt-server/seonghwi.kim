@@ -34,6 +34,6 @@ public record PostResponse(
             return "익명";
         }
 
-        return post.getAuthor();
+        return post.getUser().getNickname();
     }
 }

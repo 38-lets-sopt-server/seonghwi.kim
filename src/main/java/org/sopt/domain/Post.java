@@ -1,51 +1,86 @@
 package org.sopt.domain;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
-public class Post {
+@Entity
+@Table(name = "posts")
+public class Post extends BaseTimeEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String content;
-    private String author;
-    private boolean isAnonymous;
-    private BoardType boardType;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Post(
-            Long id,
-            String title,
-            String content,
-            String author,
-            boolean isAnonymous,
-            BoardType boardType,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
-    ) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.author = author;
-        this.isAnonymous = isAnonymous;
-        this.boardType = boardType;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    @Column(nullable = false, length = 50)
+    private String title;
+
+    @Column(nullable = false, length = 500)
+    private String content;
+
+    @Column(name = "is_anonymous", nullable = false)
+    private boolean isAnonymous;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_type", nullable = false)
+    private BoardType boardType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    protected Post() {
     }
 
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public String getContent() { return content; }
-    public String getAuthor() { return author; }
-    public boolean isAnonymous() { return isAnonymous; }
-    public BoardType getBoardType() { return boardType; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-
-    public void update(String title, String content, boolean isAnonymous, LocalDateTime updatedAt) {
+    public Post(
+            String title,
+            String content,
+            boolean isAnonymous,
+            BoardType boardType,
+            User user
+    ) {
         this.title = title;
         this.content = content;
         this.isAnonymous = isAnonymous;
-        this.updatedAt = updatedAt;
+        this.boardType = boardType;
+        this.user = user;
+    }
+
+    public void update(String title, String content, boolean isAnonymous) {
+        this.title = title;
+        this.content = content;
+        this.isAnonymous = isAnonymous;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public boolean isAnonymous() {
+        return isAnonymous;
+    }
+
+    public BoardType getBoardType() {
+        return boardType;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

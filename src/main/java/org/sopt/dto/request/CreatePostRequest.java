@@ -5,7 +5,7 @@ import org.sopt.domain.BoardType;
 public record CreatePostRequest(
         String title,
         String content,
-        String author,
+        Long userId,
         Boolean isAnonymous,
         BoardType boardType
 ) {

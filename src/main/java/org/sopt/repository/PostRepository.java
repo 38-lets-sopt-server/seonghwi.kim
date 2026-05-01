@@ -1,19 +1,19 @@
 package org.sopt.repository;
 
+import org.sopt.domain.BoardType;
 import org.sopt.domain.Post;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepository {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Post save(Post post);
+    @EntityGraph(attributePaths = "user")
+    List<Post> findByBoardType(BoardType boardType, Pageable pageable);
 
-    List<Post> findAll();
-
-    Optional<Post> findById(Long id);
-
-    boolean deleteById(Long id);
-
-    Long generateId();
+    @EntityGraph(attributePaths = "user")
+    Optional<Post> findWithUserById(Long id);
 }
