@@ -88,6 +88,18 @@ public enum ErrorCode {
             "게시글에 대한 권한이 없습니다."
     ),
 
+    LIKE_ALREADY_EXISTS(
+            HttpStatus.CONFLICT,
+            "LIKE_ALREADY_EXISTS",
+            "이미 좋아요를 누른 게시글입니다."
+    ),
+
+    LIKE_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "LIKE_NOT_FOUND",
+            "좋아요를 누른 기록이 없습니다."
+    ),
+
     INTERNAL_SERVER_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "INTERNAL_SERVER_ERROR",
