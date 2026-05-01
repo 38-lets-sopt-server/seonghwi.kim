@@ -40,6 +40,12 @@ public enum ErrorCode {
             "내용은 필수입니다."
     ),
 
+    INVALID_POST_CONTENT_LENGTH(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_POST_CONTENT_LENGTH",
+            "내용은 500자 이하여야 합니다."
+    ),
+
     INVALID_POST_ANONYMOUS(
             HttpStatus.BAD_REQUEST,
             "INVALID_POST_ANONYMOUS",

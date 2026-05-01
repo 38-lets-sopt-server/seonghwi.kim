@@ -1,8 +1,10 @@
 package org.sopt.exception;
 
 import org.sopt.dto.response.BaseResponse;
+import org.springframework.validation.FieldError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -20,6 +22,38 @@ public class GlobalExceptionHandler {
                         errorCode.getCode(),
                         exception.getMessage()
                 ));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponse<Void>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception
+    ) {
+        ErrorCode errorCode = extractErrorCode(exception);
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(BaseResponse.fail(
+                        errorCode.getCode(),
+                        errorCode.getMessage()
+                ));
+    }
+
+    private ErrorCode extractErrorCode(MethodArgumentNotValidException exception) {
+        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
+            String errorCodeName = fieldError.getDefaultMessage();
+
+            if (errorCodeName == null || errorCodeName.isBlank()) {
+                continue;
+            }
+
+            try {
+                return ErrorCode.valueOf(errorCodeName);
+            } catch (IllegalArgumentException e) {
+                return ErrorCode.INVALID_REQUEST_BODY;
+            }
+        }
+
+        return ErrorCode.INVALID_REQUEST_BODY;
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
