@@ -1,6 +1,11 @@
 package org.sopt.dto.response;
 
-public record CreatePostResponse(  // 게시글 작성 응답 DTO
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "게시글 작성 응답")
+public record CreatePostResponse(
+
+        @Schema(description = "생성된 게시글 ID", example = "1")
         Long postId
 ) {
 }

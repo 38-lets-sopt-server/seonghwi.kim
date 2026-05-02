@@ -40,6 +40,12 @@ public enum ErrorCode {
             "내용은 필수입니다."
     ),
 
+    INVALID_POST_CONTENT_LENGTH(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_POST_CONTENT_LENGTH",
+            "내용은 500자 이하여야 합니다."
+    ),
+
     INVALID_POST_ANONYMOUS(
             HttpStatus.BAD_REQUEST,
             "INVALID_POST_ANONYMOUS",
@@ -80,6 +86,18 @@ public enum ErrorCode {
             HttpStatus.FORBIDDEN,
             "POST_FORBIDDEN",
             "게시글에 대한 권한이 없습니다."
+    ),
+
+    LIKE_ALREADY_EXISTS(
+            HttpStatus.CONFLICT,
+            "LIKE_ALREADY_EXISTS",
+            "이미 좋아요를 누른 게시글입니다."
+    ),
+
+    LIKE_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "LIKE_NOT_FOUND",
+            "좋아요를 누른 기록이 없습니다."
     ),
 
     INTERNAL_SERVER_ERROR(
