@@ -82,12 +82,7 @@ public class PostService {
                         .and(Sort.by(Sort.Direction.DESC, "id"))
         );
 
-        return postRepository.findByBoardType(boardType, pageRequest).stream()
-                .map(post -> PostResponse.from(
-                        post,
-                        likeRepository.countByPostId(post.getId())
-                ))
-                .toList();
+        return postRepository.findPostResponsesByBoardTypeWithLikeCount(boardType, pageRequest);
     }
 
     // READ - 단건 조회
