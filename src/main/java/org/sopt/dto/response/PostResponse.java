@@ -27,6 +27,9 @@ public record PostResponse(
         @Schema(description = "게시판 종류", example = "FREE")
         BoardType boardType,
 
+        @Schema(description = "좋아요 수", example = "3")
+        long likeCount,
+
         @Schema(description = "게시글 생성 시각", example = "2026-05-01T14:30:00")
         LocalDateTime createdAt,
 
@@ -34,7 +37,7 @@ public record PostResponse(
         LocalDateTime updatedAt
 ) {
 
-    public static PostResponse from(Post post) {
+    public static PostResponse from(Post post, long likeCount) {
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
@@ -42,6 +45,7 @@ public record PostResponse(
                 getAuthorName(post),
                 post.isAnonymous(),
                 post.getBoardType(),
+                likeCount,
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );

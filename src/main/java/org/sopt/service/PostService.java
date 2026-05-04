@@ -11,6 +11,7 @@ import org.sopt.exception.BusinessException;
 import org.sopt.exception.ErrorCode;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.exception.UserNotFoundException;
+import org.sopt.repository.LikeRepository;
 import org.sopt.repository.PostRepository;
 import org.sopt.repository.UserRepository;
 import org.sopt.validator.PostValidator;
@@ -26,15 +27,18 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     private final PostValidator postValidator;
 
     public PostService(
             PostRepository postRepository,
             UserRepository userRepository,
+            LikeRepository likeRepository,
             PostValidator postValidator
     ) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
         this.postValidator = postValidator;
     }
 
@@ -79,7 +83,10 @@ public class PostService {
         );
 
         return postRepository.findByBoardType(boardType, pageRequest).stream()
-                .map(PostResponse::from)
+                .map(post -> PostResponse.from(
+                        post,
+                        likeRepository.countByPostId(post.getId())
+                ))
                 .toList();
     }
 
@@ -87,8 +94,9 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = findPostById(id);
+        long likeCount = likeRepository.countByPostId(post.getId());
 
-        return PostResponse.from(post);
+        return PostResponse.from(post, likeCount);
     }
 
     // UPDATE
